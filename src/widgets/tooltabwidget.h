@@ -21,7 +21,7 @@ class ToolTabWidget : public QTabWidget
 public:
     ToolTabWidget(QWidget *parent, QString path);
     void saveToFileCurrentTab(QString path);
-    void setDataInTabs(QByteArray &data);
+    void setDataInTabs(QByteArray &data, int index = -1);
 
 private:
     void loadStyle(QString path, QString name);
@@ -32,6 +32,11 @@ private:
 
 public slots:
     void onTabModified(bool modified);
+    void giveData();
+    void setHexViewTab();
+
+signals:
+    void askData(int index);
 
 };
 

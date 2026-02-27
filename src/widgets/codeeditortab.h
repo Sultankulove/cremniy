@@ -5,6 +5,8 @@
 #include "tooltab.h"
 #include <QWidget>
 #include <qfileinfo.h>
+#include <qlabel.h>
+#include "utils.h"
 
 class CodeEditorTab : public QWidget, public ToolTab
 {
@@ -12,6 +14,8 @@ class CodeEditorTab : public QWidget, public ToolTab
 
 private:
     QCodeEditor* m_codeEditorWidget;
+    QWidget* m_overlayWidget;
+    bool forceSetData = false;
 
 public:
     explicit CodeEditorTab(QWidget *parent, QString path);
@@ -25,11 +29,23 @@ public:
     };
 
     void setTabData(QByteArray &data) override {
-        m_codeEditorWidget->setBData(data);
+
+        if (isBinary(data) && !forceSetData){
+            m_codeEditorWidget->hide();
+            m_overlayWidget->show();
+        }
+        else{
+            m_codeEditorWidget->show();
+            m_overlayWidget->hide();
+            m_codeEditorWidget->setBData(data);
+            forceSetData = false;
+        }
     };
 
 signals:
     void modifyData(bool modified);
+    void askData();
+    void setHexViewTab();
 };
 
 #endif // CODEEDITORTAB_H

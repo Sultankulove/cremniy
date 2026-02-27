@@ -59,11 +59,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         include/toolwidget.hpp
         include/tooltab.h
         include/tooltab.cpp
+
+        utils/utils.h
+        utils/utils.cpp
     )
     target_include_directories(untitled1 PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/widgets
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+${CMAKE_CURRENT_SOURCE_DIR}/utils)
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET untitled1 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

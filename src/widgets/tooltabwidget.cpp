@@ -31,11 +31,34 @@ ToolTabWidget::ToolTabWidget(QWidget *parent, QString path)
 
     connect(m_codeEditorTab, &CodeEditorTab::modifyData,
             this, &ToolTabWidget::onTabModified);
+    connect(m_codeEditorTab, &CodeEditorTab::askData,
+            this, &ToolTabWidget::giveData);
+    connect(m_codeEditorTab, &CodeEditorTab::setHexViewTab,
+            this, &ToolTabWidget::setHexViewTab);
+
     connect(m_hexViewTab, &HexViewTab::modifyData,
             this, &ToolTabWidget::onTabModified);
     connect(m_disassemblerTab, &DisassemblerTab::modifyData,
             this, &ToolTabWidget::onTabModified);
 
+}
+
+void ToolTabWidget::setHexViewTab(){
+    int index = indexOf(m_hexViewTab);
+    setCurrentIndex(index);
+}
+
+void ToolTabWidget::giveData(){
+    QObject* s = sender();
+    int index = -1;
+    if (s == m_codeEditorTab)
+        index = this->indexOf(m_codeEditorTab);
+    else if (s == m_hexViewTab)
+        index = this->indexOf(m_hexViewTab);
+
+    if (index >= 0){
+        emit askData(index);
+    }
 }
 
 void ToolTabWidget::onTabModified(bool modified)
@@ -70,14 +93,25 @@ void ToolTabWidget::saveToFileCurrentTab(QString path){
     setTabText(index, text);
 }
 
-void ToolTabWidget::setDataInTabs(QByteArray &data){
-    for (int i = 0; i < count(); ++i) {
-        QWidget* w = widget(i);
+void ToolTabWidget::setDataInTabs(QByteArray &data, int index){
+    if (index >= 0){
+        QWidget* w = widget(index);
         if (!w) return;
 
         ToolTab* tab = dynamic_cast<ToolTab*>(w);
         if (!tab) return;
 
         tab->setTabData(data);
+    }
+    else{
+        for (int i = 0; i < count(); ++i) {
+            QWidget* w = widget(i);
+            if (!w) return;
+
+            ToolTab* tab = dynamic_cast<ToolTab*>(w);
+            if (!tab) return;
+
+            tab->setTabData(data);
+        }
     }
 }
